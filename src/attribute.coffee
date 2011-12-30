@@ -6,21 +6,23 @@ class Ambrosia.Attribute extends Ambrosia.Eventable
     @set getter
   
   get: -> 
-    @trigger "get", ->
+    @trigger "get", []
     @value
     
   set: (getter = ->) ->
     
-    # Turn the getter into a simple function
-    if _.isFunction(getter)
-      @getter = getter
-    else if getter instanceof Ambrosia.Attribute
-      @getter = -> getter.get()
-    else
-      @getter = -> getter
+    @triggerAround "set", [], ->
     
-    # Refresh the attribute's value
-    @refresh()
+      # Turn the getter into a simple function
+      if _.isFunction(getter)
+        @getter = getter
+      else if getter instanceof Ambrosia.Attribute
+        @getter = -> getter.get()
+      else
+        @getter = -> getter
+    
+      # Refresh the attribute's value
+      @refresh()
   
   refresh: ->
 
@@ -38,7 +40,7 @@ class Ambrosia.Attribute extends Ambrosia.Eventable
       @bind change: watch
     
     # Watch for dependencies
-    @triggerAround "change", =>
+    @triggerAround "change", [], =>
       Ambrosia.Attribute.instanceBind get: add
       @value = @getter()
       Ambrosia.Attribute.instanceUnbind get: add

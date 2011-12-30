@@ -27,7 +27,7 @@ Vows.describe("Eventable Class").addBatch(
       
     "pass arguments to listeners": (emitter) ->
       emitter.bind grapefruit: (answer) -> assert.equal answer, 42
-      emitter.trigger "grapefruit", 42
+      emitter.trigger "grapefruit", [42]
       
     "fire its listeners multiple times": (emitter) ->
       fired = 0
@@ -59,7 +59,7 @@ Vows.describe("Eventable Class").addBatch(
       emitter.bind beforeWatermelon: -> assert.equal fired++, 0
       emitter.bind watermelon: -> assert.equal fired++, 1
       emitter.bind afterWatermelon: -> assert.equal fired++, 2
-      emitter.triggerAround "watermelon", ->
+      emitter.triggerAround "watermelon", [], ->
       assert.equal fired, 3
         
     "pass arguments to all triggerAround events": (emitter) ->
@@ -67,7 +67,7 @@ Vows.describe("Eventable Class").addBatch(
       emitter.bind beforePear: (answer) -> assert.equal answer, 42
       emitter.bind pear: (answer) -> assert.equal answer, 42
       emitter.bind afterPear: (answer) -> assert.equal answer, 42
-      emitter.triggerAround "pear", 42, ->
+      emitter.triggerAround "pear", [42], ->
     
     "fire class listeners": (emitter) ->
       fired = false
@@ -86,7 +86,7 @@ Vows.describe("Eventable Class").addBatch(
     
     "pass arguments to class listeners": (emitter) ->
       Ambrosia.Eventable.instanceBind lime: (answer) -> assert.equal answer, 42
-      emitter.trigger "lime", 42
+      emitter.trigger "lime", [42]
       
     "run class listeners with scope": (emitter) ->
       Ambrosia.Eventable.instanceBind blueberry: -> assert.equal @, emitter

@@ -41,13 +41,13 @@ class Ambrosia.Eventable
     for name, listener of events
       @events[name] = _.without @events[name], listener
       
-  triggerAround: (name, args..., action) ->
-    @trigger.apply @, ["before#{_.capitalize(name)}"].concat args
+  triggerAround: (name, args, action) ->
+    @trigger.call @, "before#{_.capitalize(name)}", args
     action()
-    @trigger.apply @, [name].concat args
-    @trigger.apply @, ["after#{_.capitalize(name)}"].concat args
+    @trigger.call @, name, args
+    @trigger.call @, "after#{_.capitalize(name)}", args
     
-  trigger: (name, args...) ->
+  trigger: (name, args) ->
     
     # Run class listeners
     ancestor = @constructor
