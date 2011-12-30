@@ -59,7 +59,7 @@ Vows.describe("Eventable Class").addBatch(
       emitter.bind beforeWatermelon: -> assert.equal fired++, 0
       emitter.bind watermelon: -> assert.equal fired++, 1
       emitter.bind afterWatermelon: -> assert.equal fired++, 2
-      emitter.triggerAround "watermelon", [], ->
+      emitter.triggerAround "watermelon", ->
       assert.equal fired, 3
         
     "pass arguments to all triggerAround events": (emitter) ->
@@ -70,7 +70,7 @@ Vows.describe("Eventable Class").addBatch(
       emitter.triggerAround "pear", [42], ->
     
     "run triggerAround actions with proper scope": (emitter) ->
-      emitter.triggerAround "dragonfruit", [], ->
+      emitter.triggerAround "dragonfruit", ->
         assert.equal @, emitter
     
     "fire class listeners": (emitter) ->

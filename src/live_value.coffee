@@ -1,4 +1,4 @@
-class Ambrosia.Attribute extends Ambrosia.Eventable
+class Ambrosia.LiveValue extends Ambrosia.Eventable
   
   constructor: (getter) ->
     super
@@ -16,7 +16,7 @@ class Ambrosia.Attribute extends Ambrosia.Eventable
       # Turn the getter into a simple function
       if _.isFunction(getter)
         @getter = getter
-      else if getter instanceof Ambrosia.Attribute
+      else if getter instanceof Ambrosia.LiveValue
         @getter = -> getter.get()
       else
         @getter = -> getter
@@ -41,7 +41,7 @@ class Ambrosia.Attribute extends Ambrosia.Eventable
     
     # Watch for dependencies
     @triggerAround "change", [], =>
-      Ambrosia.Attribute.instanceBind get: add
+      Ambrosia.LiveValue.instanceBind get: add
       @value = @getter()
-      Ambrosia.Attribute.instanceUnbind get: add
+      Ambrosia.LiveValue.instanceUnbind get: add
   

@@ -32,7 +32,7 @@
 
 `triggerAround(name, arguments..., action)`
 
-### Ambrosia.Attribute
+### Ambrosia.LiveValue
 
 #### Methods
 

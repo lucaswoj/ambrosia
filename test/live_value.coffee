@@ -8,7 +8,7 @@ Vows.describe("Utility Functions").addBatch(
   
   "An attribute with a static getter will":
   
-    topic: -> new Ambrosia.Attribute "Canada"
+    topic: -> new Ambrosia.LiveValue "Canada"
     
     "return its value": (attribute) ->
       assert.equal attribute.get(), "Canada"
@@ -18,7 +18,7 @@ Vows.describe("Utility Functions").addBatch(
       
   "An attribute without dependencies will":
 
-    topic: -> new Ambrosia.Attribute -> "Mexico"
+    topic: -> new Ambrosia.LiveValue -> "Mexico"
 
     "return its value": (attribute) ->
       assert.equal attribute.get(), "Mexico"
@@ -29,8 +29,8 @@ Vows.describe("Utility Functions").addBatch(
   "An attribute with a dependency will":
 
     topic: -> 
-      country = new Ambrosia.Attribute "Mexico"
-      phrase = new Ambrosia.Attribute -> "Viva #{country.get()}!"
+      country = new Ambrosia.LiveValue "Mexico"
+      phrase = new Ambrosia.LiveValue -> "Viva #{country.get()}!"
       country: country, phrase: phrase
 
     "return its value": (attributes) ->
@@ -46,9 +46,9 @@ Vows.describe("Utility Functions").addBatch(
     "An attribute with multiple dependencies will":
 
       topic: -> 
-        first: first = new Ambrosia.Attribute -> "Michelle"
-        last: last = new Ambrosia.Attribute -> "Obama"
-        full: full = new Ambrosia.Attribute -> "#{first.get()} #{last.get()}"
+        first: first = new Ambrosia.LiveValue -> "Michelle"
+        last: last = new Ambrosia.LiveValue -> "Obama"
+        full: full = new Ambrosia.LiveValue -> "#{first.get()} #{last.get()}"
 
       "return its value": (attributes) ->
         assert.equal attributes.full.get(), "Michelle Obama"
@@ -63,8 +63,8 @@ Vows.describe("Utility Functions").addBatch(
     "An attribute bound to another attribute":
 
       topic: ->
-        once: once = new Ambrosia.Attribute "Aspen"
-        again: again = new Ambrosia.Attribute once
+        once: once = new Ambrosia.LiveValue "Aspen"
+        again: again = new Ambrosia.LiveValue once
 
       "will update with source attribute": (attributes) ->
         attributes.once.set "Pine"

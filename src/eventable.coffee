@@ -42,12 +42,19 @@ class Ambrosia.Eventable
       @events[name] = _.without @events[name], listener
       
   triggerAround: (name, args, action) ->
+    
+    if arguments.length == 3
+      [name, args, action] = arguments
+    else if arguments.length == 2
+      [name, action] = arguments
+      args = []
+    
     @trigger.call @, "before#{_.capitalize(name)}", args
     action.call @
     @trigger.call @, name, args
     @trigger.call @, "after#{_.capitalize(name)}", args
     
-  trigger: (name, args) ->
+  trigger: (name, args = []) ->
     
     # Run class listeners
     ancestor = @constructor

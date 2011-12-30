@@ -1,10 +1,12 @@
 #= require_self
-#= require ./util
+#= require ./utilities
 #= require ./eventable
-#= require ./attribute
+#= require ./live_value
+#= require ./live_array
+#= require ./live_object
 #= require_tree .
 
-Ambrosia = {}
+Ambrosia = { UI: {} }
 
 if require? && module?
   module.exports = global.Ambrosia = Ambrosia
