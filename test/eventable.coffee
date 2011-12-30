@@ -69,6 +69,10 @@ Vows.describe("Eventable Class").addBatch(
       emitter.bind afterPear: (answer) -> assert.equal answer, 42
       emitter.triggerAround "pear", [42], ->
     
+    "run triggerAround actions with proper scope": (emitter) ->
+      emitter.triggerAround "dragonfruit", [], ->
+        assert.equal @, emitter
+    
     "fire class listeners": (emitter) ->
       fired = false
       Ambrosia.Eventable.instanceBind strawberry: -> fired = true

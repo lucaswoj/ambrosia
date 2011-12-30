@@ -43,7 +43,7 @@ class Ambrosia.Eventable
       
   triggerAround: (name, args, action) ->
     @trigger.call @, "before#{_.capitalize(name)}", args
-    action()
+    action.call @
     @trigger.call @, name, args
     @trigger.call @, "after#{_.capitalize(name)}", args
     
