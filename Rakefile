@@ -2,15 +2,19 @@ require "rubygems"
 require "sprockets"
 require "fssm"
 
+task :build do
+  build
+end
+
+task :test do
+  test
+end
+
 task :watch do
   build  
   watch "**/*.coffee" do
     build
   end
-end
-
-task :test do
-  test
 end
 
 def test
