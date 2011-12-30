@@ -2,7 +2,7 @@
 #= require ./util
 #= require ./eventable
 #= require ./attribute
-#= require ./view
+#= require_tree .
 
 Ambrosia = {}
 
