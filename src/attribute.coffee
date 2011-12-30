@@ -11,7 +11,7 @@ class Ambrosia.Attribute extends Ambrosia.Eventable
     
   set: (getter = ->) ->
     
-    @triggerAround "set", [], ->
+    @triggerAround "set", [], =>
     
       # Turn the getter into a simple function
       if _.isFunction(getter)
