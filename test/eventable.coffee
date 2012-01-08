@@ -1,8 +1,8 @@
 Vows = require "vows"
 assert = require "assert"
+_ = require "underscore"
 
 Ambrosia = require "../dist/ambrosia"
-_ = Ambrosia.util
 
 Vows.describe("Eventable Class").addBatch(
   
@@ -73,6 +73,18 @@ Vows.describe("Eventable Class").addBatch(
       emitter.triggerAround "dragonfruit", ->
         assert.equal @, emitter
     
+    "fire a bindNow listener now and when the event occurs": (emitter) ->
+      fired = 0
+      emitter.bindNow blueberry: -> fired++
+      assert.equal fired, 1
+      emitter.trigger "blueberry"
+      assert.equal fired, 2
+      
+    "pass immediate arguments to a bindNow listener": (emitter) ->
+      answer = 0
+      emitter.bindNow "tangerine", [42], (number) -> answer = number
+      assert.equal answer, 42
+    
     "fire class listeners": (emitter) ->
       fired = false
       Ambrosia.Eventable.instanceBind strawberry: -> fired = true
@@ -110,5 +122,37 @@ Vows.describe("Eventable Class").addBatch(
       Ambrosia.Eventable.instanceBindOnce avacado: -> fired++
       _.times 5, -> emitter.trigger "avacado"
       assert.equal fired, 1
+      
+    "unbind all listeners for a specific event": (emitter) ->
+      fired = 0
+      emitter.bind tangerine: -> fired++
+      emitter.unbind "tangerine"
+      emitter.trigger "tangerine"
+      assert.equal fired, 0
+      
+    "unbind all listeners for all events": (emitter) ->
+      fired = 0
+      emitter.bind tomato: -> fired++
+      emitter.unbind()
+      emitter.trigger "tomato"
+      assert.equal fired, 0
+      
+  "A subclass of Eventable with an listener method will":
     
+    topic: ->
+      class Child extends Ambrosia.Eventable
+      new Child
+    
+    "run listener methods when their event is triggered": (child) ->
+      fired = false
+      child.onPeach = -> fired = true
+      child.trigger "peach"
+      assert.ok fired
+      
+    "pass arguments to listener methods": (child) ->
+      answer = 0
+      child.onMango = (number) -> answer = number
+      child.trigger "mango", [42]
+      assert.equal answer, 42
+      
 ).export(module)

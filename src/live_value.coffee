@@ -1,47 +1,64 @@
+Ambrosia = window?.Ambrosia || module.exports
+{ _ } = Ambrosia
+
 class Ambrosia.LiveValue extends Ambrosia.Eventable
-  
-  constructor: (getter) ->
+    
+  constructor: (value) ->
     super
     @dependencies = []
-    @set getter
+    @set value
   
-  get: -> 
-    @trigger "get", []
+  get: => 
+    @trigger "get"
     @value
     
-  set: (getter = ->) ->
+  set: (value) ->
     
-    @triggerAround "set", [], =>
-    
-      # Turn the getter into a simple function
-      if _.isFunction(getter)
-        @getter = getter
-      else if getter instanceof Ambrosia.LiveValue
-        @getter = -> getter.get()
+    @triggerAround "set", =>
+      
+      if value instanceof Ambrosia.LiveValue
+        @setMirror(value)
+      else if _.isFunction value
+        @setComputed(value)
       else
-        @getter = -> getter
-    
-      # Refresh the attribute's value
-      @refresh()
+        @setStatic(value)
   
-  refresh: ->
-
-    watch = => @refresh()
-    
-    # Unbind and clear existing dependencies
-    for dependency in @dependencies
-      dependency.unbind change: watch
+  setMirror: (mirrored) ->
+    @setComputed -> mirrored.get()
+  
+  setStatic: (value) ->
+    @triggerAround "change", ->
+      @value = value
+  
+  setComputed: (compute) ->
+  
     @dependencies = []
-    
-    # Callback to be run on each dependency
-    dependencies = @dependencies
-    add = ->
-      dependencies.push @
-      @bind change: watch
-    
-    # Watch for dependencies
-    @triggerAround "change", [], =>
-      Ambrosia.LiveValue.instanceBind get: add
-      @value = @getter()
-      Ambrosia.LiveValue.instanceUnbind get: add
   
+    clear = =>
+      
+      # Unbind and clear existing dependencies
+      for dependency in @dependencies
+        dependency.unbind change: refresh
+      @dependencies = []
+    
+    refresh = @refresh = =>
+    
+      clear()
+    
+      # Callback to be run on each dependency
+      dependencies = @dependencies
+      add = ->
+        dependencies.push @
+        @bind change: refresh
+    
+      # Watch for dependencies
+      @triggerAround "change", =>
+        Ambrosia.LiveValue.instanceBind get: add
+        @value = compute()
+        Ambrosia.LiveValue.instanceUnbind get: add
+    
+    refresh()
+    
+    @bindOnce "beforeSet", ->
+      clear()
+      @refresh = ->

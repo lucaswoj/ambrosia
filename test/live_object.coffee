@@ -4,15 +4,7 @@ assert = require "assert"
 Ambrosia = require "../dist/ambrosia"
 _ = Ambrosia.util
 
-assert.event = (name, object, action) ->
-  fired = false
-  listener = -> fired = true
-  object.bind name, listener
-  action()
-  object.unbind name, listener
-  assert.ok fired, "Expected '#{name}' event to be triggered but it was not"
-
-Vows.describe("Utility Functions").addBatch(
+Vows.describe("LiveObject").addBatch(
   
   "An object with a static attribute will":
     
@@ -21,13 +13,10 @@ Vows.describe("Utility Functions").addBatch(
       
     "have the attribute": (object) ->
       assert.instanceOf object.color, Ambrosia.LiveValue
-      assert.instanceOf object.attributes.color, Ambrosia.LiveValue
-    
-    "fire a 'change' event when the attribute changes": (object) ->
-      assert.event "change", object, -> object.color.set "red"
+      assert.instanceOf object.values.color, Ambrosia.LiveValue
       
     "get the attribute's value": (object) ->
-      assert.equal object.get("color"), "red"
+      assert.equal object.get("color"), "orange"
       
     "set the attribute's value": (object) ->
       object.set("color", "green")
@@ -39,5 +28,13 @@ Vows.describe("Utility Functions").addBatch(
       
     "flatten to a native javascript object": (object) ->
       assert.deepEqual object.flatten(), color: "tope"
+      
+    "add attributes": (object) ->
+      object.set size: "medium"
+      assert.equal object.get("size"), "medium"
+    
+    "fire the change event when adding an attribute": (object) ->
+      assert.event "change", object, ->
+        object.set price: 20
 
 ).export(module)

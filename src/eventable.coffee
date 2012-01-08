@@ -1,78 +1,113 @@
+Ambrosia = window?.Ambrosia || module.exports
+{ _ } = Ambrosia
+
 class Ambrosia.Eventable
   
   @events = {}
   
   @instanceBind: ->
-    events = argumentsToObject(arguments)
-    for name, listener of events
-      event = (Eventable.events[@] ||= {})[name] ||= []
+    events = parseArgs(arguments)
+    for event, listener of events
+      event = (Ambrosia.Eventable.events[@] ||= {})[event] ||= []
       event.push listener
       
   @instanceBindOnce: ->
-    events = argumentsToObject(arguments)
+    events = parseArgs(arguments)
     events = _.mapObject events, (listener) => =>
       @instanceUnbind events
       listener()
     @instanceBind events
       
   @instanceUnbind: ->
-    events = argumentsToObject(arguments)
-    for name, listener of events
-      @events[@][name] = _.without @events[@][name], listener
+    events = parseArgs(arguments)
+    for event, listener of events
+      Ambrosia.Eventable.events[@][event] = _.without Ambrosia.Eventable.events[@][event], listener
 
   constructor: ->
     @events = {}
   
   bind: ->
-    events = argumentsToObject(arguments)
-    for name, listener of events
-      event = @events[name] ||= []
+    events = parseArgs(arguments)
+    for event, listener of events
+      event = @events[event] ||= []
       event.push listener
-      
+
   bindOnce: ->
-    events = argumentsToObject(arguments)
+    events = parseArgs(arguments)
     events = _.mapObject events, (listener) -> ->
       @unbind events
       listener()
     @bind events
+
+  bindNow: ->
+    events = parseArgs(arguments)
+    args = if arguments.length is 3 then arguments[1] else []
+    listener.apply @, args for event, listener of events
+    @bind events
       
   unbind: ->
-    events = argumentsToObject(arguments)
-    for name, listener of events
-      @events[name] = _.without @events[name], listener
+    
+    # Unbind everything
+    if arguments.length == 0
+      @events = {}
       
-  triggerAround: (name, args, action) ->
+    # Unbind all listeners for a specific event
+    else if arguments.length == 1 && _.isString(arguments[0])
+      @events[arguments[0]] = []
+    
+    # Unbind a single listener
+    else
+      events = parseArgs(arguments)
+      for event, listener of events
+        @events[event] = _.without @events[event], listener
+      
+  triggerAround: (event, args, action) ->
     
     if arguments.length == 3
-      [name, args, action] = arguments
+      [event, args, action] = arguments
     else if arguments.length == 2
-      [name, action] = arguments
+      [event, action] = arguments
       args = []
     
-    @trigger.call @, "before#{_.capitalize(name)}", args
+    @trigger.call @, "before#{_.capitalize(event)}", args
     action.call @
-    @trigger.call @, name, args
-    @trigger.call @, "after#{_.capitalize(name)}", args
+    @trigger.call @, event, args
+    @trigger.call @, "after#{_.capitalize(event)}", args
     
-  trigger: (name, args = []) ->
-    
+  trigger: (event, args = []) ->
+            
     # Run class listeners
     ancestor = @constructor
     while ancestor
-      if Eventable.events[ancestor]?[name]?
-        for listener in Eventable.events[ancestor][name]
+      if Eventable.events[ancestor]?[event]?
+        for listener in Eventable.events[ancestor][event]
           listener.apply @, args
       ancestor = ancestor.__super__?.constructor
     
     # Run instance listeners
-    if @events[name]?
-      for listener in @events[name]
+    if @events[event]?
+      for listener in @events[event]
         listener.apply @, args
+    
+    # Run listener method
+    method = "on#{_.capitalize event}"
+    if @[method]?
+      @[method].apply @, args
+    
+  parseArgs = (args) ->
+    
+    # If arguments have the form (events)
+    if args.length == 1
+      args[0]
       
-  argumentsToObject = (args) ->
-    if args.length == 2 
+    # If arguments have the form (event, listener)
+    else if args.length == 2
       events = {}
       events[args[0]] = args[1]
       events
-    else if args.length == 1
-      args[0]
+      
+    # If arguments have the form (event, args..., listener)
+    else if args.length == 3
+      events = {}
+      events[args[0]] = args[2]
+      events

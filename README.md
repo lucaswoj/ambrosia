@@ -4,13 +4,55 @@
 
 ## API Reference
 
+### Ambrosia
+
+#### Properties
+
+`Ambrosia.node`: `true` if we're running in a CommonJS environment, `false` otherwise
+
+`Ambrosia.browser`: `true` if we're running in the browser, `false` otherwise
+
 ### Utility Methods
 
-`_.mapObject(object, filter)`
+`_.capitalize(string)`: Make the first letter of a string uppercase. For example, _.capitalize
 
-`_.capitalize(string)`
+`_.mapObject(object, filter)`: Works like `_.map` but preserves the keys of the source object. For example, 
+
+  scientists = 
+    richard: "feynman"
+    albert: "einstein"
+  
+  _.mapObject fruits, (last, first) -> "#{first} #{last}"
+
+would return
+
+  richard: "richard feynman"
+  albert: "albert einstein"
 
 ### Ambrosia.Eventable
+
+#### Methods
+
+`bind(event, listener): Run `listener` whenever `event` occurs. Method can also be called with an object of `event: listener` pairs.
+
+`bindOnce(name, listener)`: Run `listener` the next time `event` occurs and then unbind it. Method can also be called with an object of `event: listener` pairs.
+
+`bindNow(name, listener)`: Run `listener` right now and then whenever `event` occurs. This is useful for `LiveValue` `change` events such as
+
+  color.bindNow "change", -> profile.css
+    backgroundColor: color.get()
+    
+Method can also be called with an object of `event: listener` pairs.
+
+`unbind(event, listener)`: Prevent `listener` from being run on future occurrences of `event`. Method can also be called with an object of `event: listener` pairs.
+
+`unbind(event)`: Unbind all listeners for `event`
+
+`unbind()`: Unbind all listeners for all events
+
+`trigger(name, arguments...)`:
+
+`triggerAround(name, arguments..., action)`:
 
 #### Class Methods
 
@@ -19,18 +61,6 @@
 `instanceBindOnce(name, listener)` or `instanceBindOnce(events)`
 
 `instanceUnbind(name, listener)` or `instanceUnbind(events)`
-
-#### Methods
-
-`bind(name, listener)` or `bind(events)`
-
-`bindOnce(name, listener)` or `bindOnce(events)`
-
-`unbind(name, listener)` or `unbind(events)`
-
-`trigger(name, arguments...)`
-
-`triggerAround(name, arguments..., action)`
 
 ### Ambrosia.LiveValue
 

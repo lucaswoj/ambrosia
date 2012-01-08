@@ -11,22 +11,16 @@ task :test do
 end
 
 task :watch do
-  build  
-  watch "**/*.coffee" do
+  puts "Watching filesystem"
+  watcher = FSEvent.new
+  watcher.watch ["src", "test"] do
     build
   end
+  watcher.run
 end
 
 def test
   system "vows test/*.coffee"
-end
-
-def watch file, &block
-  FSSM.monitor Dir.pwd, file do
-    update &block
-    create &block
-    delete &block
-  end
 end
 
 def reload_browser
@@ -47,7 +41,7 @@ end
 
 def build
   puts "Building..."
-  sprockets "src/ambrosia.coffee", "dist/ambrosia.js"
+  sprockets "src/main.coffee", "dist/ambrosia.js"
   test
 end
 
