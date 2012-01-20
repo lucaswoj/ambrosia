@@ -32,28 +32,28 @@ class Ambrosia.View extends Ambrosia.Eventable
         
     @id = new Ambrosia.LiveValue id || @$element.attr("id") || _.uniqueId("ambrosia")
     @id.bindNow "change", => @$element.attr("id", @id.get())
-          
-    @addClasses(@classes) if @classes
+    
+    @classes = {}
+    @addClasses(@constructor.classes) if @constructor.classes
     @addClasses(options.classes) if options.classes
-      
-    @addStyles(@styles) if @styles
+    
+    @styles = {}
+    @addStyles(@constructor.styles) if @constructor.styles
     @addStyles(options.styles) if options.styles  
     
   # ## CSS Manipulation
   
   addStyles: (styles) ->
-    for key, value in styles
+    for key, value of styles
       @addStyle(key, value)
   
   addStyle: (key, value) ->
     @styles[key] = new Ambrosia.LiveValue(value)
-    @styles[key].bindNow "change", ->
-      @$element.setStyle(key, @styles[key].get())
+    @styles[key].bindNow "change", =>
+      @$element.css(key, @styles[key].get())
   
   # ## Class Manipulation
-  
-  classes = {}
-  
+    
   addClasses: (values) ->
     @addClass value for value in values
     
@@ -62,7 +62,7 @@ class Ambrosia.View extends Ambrosia.Eventable
   
   addClass: (value) ->
     liveValue = new Ambrosia.LiveValue value
-    classes[value] = liveValue
+    @classes[value] = liveValue
     liveValue.bind "beforeChange", =>
       @$element.removeClass liveValue.get()
     liveValue.bindNow "afterChange", =>
