@@ -2,7 +2,7 @@ Vows = require "vows"
 assert = require "assert"
 _ = require "underscore"
 
-Ambrosia = require "../dist/ambrosia"
+Ambrosia = require "../../dist/ambrosia"
 {$, Zepto} = Ambrosia
 
 Vows.describe("Base View").addBatch(

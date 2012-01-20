@@ -20,7 +20,7 @@ task :watch do
 end
 
 def test
-  system "vows test/*.coffee"
+  system "vows test/*.coffee test/**/*.coffee"
 end
 
 def reload_browser
