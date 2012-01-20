@@ -96,7 +96,6 @@ class Ambrosia.LiveArray extends Ambrosia.Live
       movedValues = @values.slice(startIndex + amount + 1)
       
       newValues = newValues.concat(movedValues)
-      newLiveValues = wrap(startIndex, newValues)
       amount += movedValues.length
       
       map.splice.apply map, [startIndex, amount].concat(_.map(newValues, filter))
