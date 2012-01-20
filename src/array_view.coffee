@@ -10,7 +10,7 @@ class Ambrosia.ArrayView extends Ambrosia.View
     @children = new Ambrosia.LiveArray(options.children)
     @childView = options.childView
     
-    @childViews = @children.liveMap (value) => new @childView(value)
+    @childViews = @children.liveMap (model) => new @childView(model: model, parentView: @)
     @childElements = @childViews.liveMap (view) => view.$element
     
     @childElements.bindNowSplice (start, amount, elements...) =>
