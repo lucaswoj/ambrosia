@@ -4,8 +4,8 @@
 #= require ./live
 #= require ./live_value
 #= require ./live_array
-#= require ./view
-#= require ./template_view
+#= require ./views/view
+#= require ./views/template_view
 #= require_tree .
 
 Ambrosia =
