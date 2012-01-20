@@ -6,8 +6,8 @@ Ambrosia = require "../dist/ambrosia"
 {$, Zepto} = Ambrosia
 
 class ChildView extends Ambrosia.View
-  constructor: (@child) ->
-    super text: @child
+  constructor: (options) ->
+    super text: options.model
 
 Vows.describe("Array View").addBatch(
   
