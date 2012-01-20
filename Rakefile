@@ -41,6 +41,7 @@ end
 
 def build
   puts "Building..."
+  Dir.mkdir "dist" if !Dir.exists? "dist"
   sprockets "src/main.coffee", "dist/ambrosia.js"
   test
 end
