@@ -16,17 +16,6 @@ _.mixin
   
   isObject: (object) ->
     object.constructor == Object
-  
-  # The default underscore.js `_.clone` method does not handle Arrays correctly.
-  # Adapted from http://my.opera.com/GreyWyvern/blog/show.dml/1725165
-  clone2: (original) ->
-    if typeof original in ["object", "array"]
-      clone = if _.isArray(original) then [] else {}
-      for key, value of original
-        clone[key] = _.clone2 value
-      clone
-    else
-      original
 
 # TODO move to seperate testing library
 if Ambrosia.node

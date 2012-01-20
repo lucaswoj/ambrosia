@@ -14,12 +14,12 @@ Ambrosia =
   toString: -> "Ambrosia"
   View: {}
 
-if Ambrosia.node
+if !Ambrosia.browser && Ambrosia.node
+  
+  module.exports = Ambrosia
   
   jsdom = require "jsdom"
   fs = require "fs"
-  
-  module.exports = Ambrosia
   
   document = jsdom.jsdom """
     <html>

@@ -31,18 +31,16 @@ class Ambrosia.LiveValue extends Ambrosia.Live
       @value = value
   
   setComputed: (compute) ->
-  
-    # Unbind and clear existing dependencies
+        
     clear = =>
       for dependency in @dependencies
         dependency.unbind change: refresh
       @dependencies = []
     
-    refresh = @refresh = =>
+    refresh = =>
     
       clear()
     
-      # Watch for dependencies
       @triggerAround "change", =>
         @dependencies = Ambrosia.Live.dependencies =>
           @value = compute()
@@ -52,6 +50,4 @@ class Ambrosia.LiveValue extends Ambrosia.Live
     
     refresh()
     
-    @bindOnce "beforeSet", ->
-      clear()
-      @refresh = ->
+    @bindOnce "beforeSet", clear

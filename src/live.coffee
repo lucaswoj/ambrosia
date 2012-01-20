@@ -3,9 +3,6 @@ Ambrosia = window?.Ambrosia || module.exports
 
 class Ambrosia.Live extends Ambrosia.Eventable
   
-  constructor: ->
-    super
-  
   @_depth: 0
   
   @dependencies: (action) ->
@@ -13,11 +10,11 @@ class Ambrosia.Live extends Ambrosia.Eventable
     depth = ++Live._depth
     dependencies = []
     
-    add = -> dependencies.push @ if Live._depth == depth
+    add = -> dependencies.push(@) if Live._depth == depth
     
-    Ambrosia.LiveValue.instanceBind get: add
+    Ambrosia.Live.instanceBind get: add
     action()
-    Ambrosia.LiveValue.instanceUnbind get: add
+    Ambrosia.Live.instanceUnbind get: add
     
     Live._depth--
     

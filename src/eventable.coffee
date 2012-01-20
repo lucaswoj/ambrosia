@@ -21,7 +21,8 @@ class Ambrosia.Eventable
   @instanceUnbind: ->
     events = parseArgs(arguments)
     for event, listener of events
-      Ambrosia.Eventable.events[@][event] = _.without Ambrosia.Eventable.events[@][event], listener
+      listeners = Ambrosia.Eventable.events[@][event]
+      listeners = _.without(listeners, listener)
 
   constructor: ->
     @events = {}
@@ -35,15 +36,15 @@ class Ambrosia.Eventable
   bindOnce: ->
     events = parseArgs(arguments)
     events = _.mapObject events, (listener) -> ->
-      @unbind events
+      @unbind(events)
       listener()
-    @bind events
+    @bind(events)
 
   bindNow: ->
     events = parseArgs(arguments)
     args = if arguments.length is 3 then arguments[1] else []
-    listener.apply @, args for event, listener of events
-    @bind events
+    listener.apply(@, args) for event, listener of events
+    @bind(events)
       
   unbind: ->
     
