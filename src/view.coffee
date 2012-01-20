@@ -33,8 +33,12 @@ class Ambrosia.View extends Ambrosia.Eventable
     @id = new Ambrosia.LiveValue id || @$element.attr("id") || _.uniqueId("ambrosia")
     @id.bindNow "change", => @$element.attr("id", @id.get())
           
+    @addClasses(@classes) if @classes
     @addClasses(options.classes) if options.classes
       
+    @addStyles(@styles) if @styles
+    @addStyles(options.styles) if options.styles  
+    
   # ## CSS Manipulation
   
   addStyles: (styles) ->
