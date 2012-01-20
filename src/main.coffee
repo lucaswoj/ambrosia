@@ -1,6 +1,7 @@
 #= require_self
 #= require ./utilities
 #= require ./eventable
+#= require ./live
 #= require ./live_value
 #= require ./live_array
 #= require ./view

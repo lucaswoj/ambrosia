@@ -2,7 +2,7 @@ Ambrosia = window?.Ambrosia || module.exports
 { _ } = Ambrosia
 
 ## TODO: sorting
-class Ambrosia.LiveArray extends Ambrosia.Eventable
+class Ambrosia.LiveArray extends Ambrosia.Live
   
   # ## new LiveArray
   constructor: (values = []) ->
@@ -63,7 +63,7 @@ class Ambrosia.LiveArray extends Ambrosia.Eventable
   
   # ## Manipulation Base Case
   splice: (startIndex, amount, values...) ->
-    
+        
     args = arguments
     
     @triggerAround "change", =>
@@ -88,26 +88,9 @@ class Ambrosia.LiveArray extends Ambrosia.Eventable
           
   liveMap: (filter) ->
     
-    # Wrap filterd values in a LiveValue
-    wrap = (startIndex, values) =>
-      _.map values, (value, offset) ->
-        index = startIndex + offset
-        liveValue = new Ambrosia.LiveValue -> filter(value, index)
-        liveValue.bind "change", -> map.set(index, liveValue.get())
-        liveValue
-    
-    # Flatten liveValues
-    flatten = (liveValues) ->
-      _.map liveValues, (liveValue) -> liveValue.get()
-      
-    liveValues = wrap(0, @values)
-    map = new Ambrosia.LiveArray flatten(liveValues)
+    map = new Ambrosia.LiveArray _.map(@values, filter)
     
     @bind "splice", (startIndex, amount, newValues...) =>
-            
-      # Unbind removed values
-      for liveValue in liveValues.slice(startIndex, startIndex + amount)
-        liveValue.unbind()
             
       # Find all moved values 
       movedValues = @values.slice(startIndex + amount + 1)
@@ -116,8 +99,7 @@ class Ambrosia.LiveArray extends Ambrosia.Eventable
       newLiveValues = wrap(startIndex, newValues)
       amount += movedValues.length
       
-      liveValues.splice.apply liveValues, [startIndex, amount].concat(newLiveValues)      
-      map.splice.apply map, [startIndex, amount].concat(flatten(newLiveValues))
+      map.splice.apply map, [startIndex, amount].concat(_.map(newValues, filter))
     
     map
     

@@ -1,7 +1,7 @@
 Ambrosia = window?.Ambrosia || module.exports
 { _ } = Ambrosia
 
-class Ambrosia.LiveValue extends Ambrosia.Eventable
+class Ambrosia.LiveValue extends Ambrosia.Live
     
   constructor: (value) ->
     super
@@ -32,11 +32,8 @@ class Ambrosia.LiveValue extends Ambrosia.Eventable
   
   setComputed: (compute) ->
   
-    @dependencies = []
-  
+    # Unbind and clear existing dependencies
     clear = =>
-      
-      # Unbind and clear existing dependencies
       for dependency in @dependencies
         dependency.unbind change: refresh
       @dependencies = []
@@ -45,17 +42,13 @@ class Ambrosia.LiveValue extends Ambrosia.Eventable
     
       clear()
     
-      # Callback to be run on each dependency
-      dependencies = @dependencies
-      add = ->
-        dependencies.push @
-        @bind change: refresh
-    
       # Watch for dependencies
       @triggerAround "change", =>
-        Ambrosia.LiveValue.instanceBind get: add
-        @value = compute()
-        Ambrosia.LiveValue.instanceUnbind get: add
+        @dependencies = Ambrosia.Live.dependencies =>
+          @value = compute()
+      
+      for dependency in @dependencies
+        dependency.bind(change: refresh)
     
     refresh()
     
