@@ -17,21 +17,6 @@ Vows.describe("Utility Functions").addBatch(
     "does nothing for an empty string": ->
       assert.equal _.capitalize(""), ""
       
-  "The _.clone2 method":
-    
-    "clones objects": ->
-      original = { one: 1 }
-      clone = _.clone2 original
-      original["one"] = 2
-      assert.equal clone["one"], 1
-      
-    "clones arrays": ->
-      original = ["zero"]
-      clone = _.clone2 original
-      original[0] = "one"
-      assert.equal clone[0], "zero"
-      assert.instanceOf clone, Array
-      
   "The _.mapObject method":
     
     "maps objects": ->

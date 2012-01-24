@@ -46,18 +46,18 @@ Vows.describe("LiveArray").addBatch(
       
     "get objects from the array": (array) ->
       assert.equal array.get(0), "mackerel"
-      
-    "set objects in the array": (array) ->
-      array.set 0, "parrotfish"
-      assert.deepEqual array.flatten(), ["parrotfish", "cod", "flounder"]
-      
-    "set objects in the array with a hash": (array) ->
-      array.set({1: "sailfish"})
-      assert.deepEqual array.flatten(), ["parrotfish", "sailfish", "flounder"]
-      
+	
     "shift objects from the array": (array) ->
       array.shift()
-      assert.deepEqual array.flatten(), ["sailfish", "flounder"]
+      assert.deepEqual array.flatten(), ["cod", "flounder"]
+
+    "set objects in the array with a hash": (array) ->
+      array.set({1: "sailfish"})
+      assert.deepEqual array.flatten(), ["cod", "sailfish"]
+
+    "set objects in the array": (array) ->
+      array.set 0, "parrotfish"
+      assert.deepEqual array.flatten(), ["parrotfish", "sailfish"]
       
   "A mapped LiveArray":
     

@@ -21,8 +21,8 @@ class Ambrosia.Eventable
   @instanceUnbind: ->
     events = parseArgs(arguments)
     for event, listener of events
-      listeners = Ambrosia.Eventable.events[@][event]
-      listeners = _.without(listeners, listener)
+      listeners = Ambrosia.Eventable.events[@]
+      listeners[event] = _.without(listeners[event], listener)
 
   constructor: ->
     @events = {}

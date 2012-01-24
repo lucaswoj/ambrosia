@@ -12,42 +12,42 @@ class Ambrosia.LiveValue extends Ambrosia.Live
     @trigger "get"
     @value
     
+  decrement: ->
+    @set(@get() - 1)
+  
+  increment: ->
+    @set(@get() + 1)
+    
+  clear: ->
+    for dependency in @dependencies
+      dependency.unbind change: @refresh
+    @dependencies = []
+  
   set: (value) ->
     
     @triggerAround "set", =>
-      
-      if value instanceof Ambrosia.LiveValue
-        @setMirror(value)
-      else if _.isFunction value
-        @setComputed(value)
-      else
-        @setStatic(value)
-  
-  setMirror: (mirrored) ->
-    @setComputed -> mirrored.get()
-  
-  setStatic: (value) ->
-    @triggerAround "change", ->
-      @value = value
-  
-  setComputed: (compute) ->
         
-    clear = =>
-      for dependency in @dependencies
-        dependency.unbind change: refresh
-      @dependencies = []
+      if value instanceof Ambrosia.LiveValue
+        @compute = -> value.get()
+      else if _.isFunction(value)
+        @compute = value
+      else
+        @compute = -> value
+  
+      @refresh()
+        
+  refresh: =>
     
-    refresh = =>
+    @clear()
     
-      clear()
-    
-      @triggerAround "change", =>
-        @dependencies = Ambrosia.Live.dependencies =>
-          @value = compute()
+    @triggerAround "change", =>
+      @dependencies = Ambrosia.Live.dependencies =>
+        @value = @compute()
       
-      for dependency in @dependencies
-        dependency.bind(change: refresh)
-    
-    refresh()
-    
-    @bindOnce "beforeSet", clear
+    for dependency in @dependencies
+      dependency.bind(change: @refresh)
+
+          
+      
+      
+      

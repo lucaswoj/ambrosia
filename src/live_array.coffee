@@ -18,34 +18,32 @@ class Ambrosia.LiveArray extends Ambrosia.Live
       values = arguments[0]
 
     @triggerAround "set", ->
-      @splice 0, @length.get()
       if values instanceof Ambrosia.LiveArray
         refresh = (start, amount, values...) =>
           @splice.apply(@, [start, amount].concat(values))
         values.bindNowSplice(refresh)
         @bindOnce("beforeSet", -> values.unbind("change", refresh))
-      else if _.isArray(arguments) or _.isObject(arguments)
+      else if _.isObject(arguments)
         for index, value of values
           @splice(parseInt(index, 10), 1, value)
       
-  get: (index) -> 
-    @values[index]  
+  get: (index) -> @values[index]  
   
   flatten: -> @values
 
   push: (values...) ->
-    @splice.apply @, [@values.length, 0].concat(values)
+    @splice.apply(@, [@values.length, 0].concat(values))
 
   pop: ->
-    @splice @values.length - 1, 1
+    @splice(@values.length - 1, 1)
 
   unshift: (values...) -> 
     @splice.apply @, [0, 0].concat(values)
 
-  shift: -> @splice 0, 1
+  shift: -> @splice(0, 1)
     
   refreshLength: ->
-    @length.set @values.length
+    @length.set(@values.length)
 
   splice: (startIndex, amount, values...) ->
         
@@ -71,11 +69,11 @@ class Ambrosia.LiveArray extends Ambrosia.Live
           
   liveMap: (filter) ->
     
-    map = new Ambrosia.LiveArray _.map(@values, filter)
+    map = new Ambrosia.LiveArray(_.map(@values, filter))
     
     @bind "splice", (index, amount, values...) =>
       spliceArguments = [index, amount].concat(_.map(values, filter))
-      map.splice.apply map, spliceArguments
+      map.splice.apply(map, spliceArguments)
     
     map
     
