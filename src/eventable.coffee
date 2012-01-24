@@ -74,26 +74,23 @@ class Ambrosia.Eventable
     action.call @
     @trigger.call @, event, args
     @trigger.call @, "after#{_.capitalize(event)}", args
-    
+  
+  ancestors = _.memoize (ancestor) ->
+      while ancestor
+        ancestor = ancestor.__super__?.constructor
+  
   trigger: (event, args = []) ->
             
     # Run class listeners
-    ancestor = @constructor
-    while ancestor
+    for ancestor in ancestors(@constructor)
       if Eventable.events[ancestor]?[event]?
         for listener in Eventable.events[ancestor][event]
           listener.apply @, args
-      ancestor = ancestor.__super__?.constructor
     
     # Run instance listeners
     if @events[event]?
       for listener in @events[event]
         listener.apply @, args
-    
-    # Run listener method
-    method = "on#{_.capitalize event}"
-    if @[method]?
-      @[method].apply @, args
     
   parseArgs = (args) ->
     
