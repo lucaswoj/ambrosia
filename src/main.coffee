@@ -12,7 +12,11 @@ Ambrosia =
   node: require? && module?
   browser: window?
   toString: -> "Ambrosia"
-  View: {}
+  
+  live: (value, change) ->
+	  liveValue = new Ambrosia.LiveValue value
+	  liveValue.bindNow("change", change) if change
+	  liveValue
 
 if !Ambrosia.browser && Ambrosia.node
   
